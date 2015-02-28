@@ -89,3 +89,9 @@ leTrans (succ≤ x₁) (succ≤ y) = {!!}
 
 cancel₂ : {a b c : ℕ} → (pf₁ : a ≤ b) → (pf₂ : b ≤ c) → (((sub c b pf₂) + (sub b a pf₁)) == (sub c a (leTrans pf₁ pf₂)))
 cancel₂ x y = {!!}
+
+
+-- Archimedian property on ℕ
+
+archProp : {a b : ℕ} → (1 ≤ a) → (a ≤ b) → Σ ℕ (λ c → b ≤ (c * a))
+archProp m n = {!!}
