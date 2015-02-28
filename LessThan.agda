@@ -2,6 +2,7 @@ open import Base
 open import Nat
 open import Id
 open import Boolean
+open import Logic
 
 module LessThan where
 
@@ -11,10 +12,21 @@ sub zero (succ n) ()
 sub (succ m) zero (0≤ .(succ m)) = succ m
 sub (succ m) (succ n) (succ≤ y) = sub m n y
 
+-- Weak cancellation for ℕ
+
+cancel₁ : {a b : ℕ} → (pf : a ≤ b) → ((a + (sub b a pf)) == b)
+cancel₁ {b = zero} (0≤ .0) = refl 0
+cancel₁ {b = succ b} (0≤ .(succ b)) = refl (succ b)
+cancel₁ {b = succ b} (succ≤ pf) = succ # cancel₁ pf
+
+-- A Version of Law of Trichotomy
+
 trich : (m : ℕ) → (n : ℕ) → ((m ≤ n) ⊕ (n ≤ m))
 trich zero y = i₁ (0≤ y)
 trich (succ x) zero = i₂ (0≤ (succ x))
 trich (succ x) (succ y) = recSum (λ a → i₁ (succ≤ a)) (λ b → i₂ (succ≤ b)) (trich x y)
+
+-- Comparsion Operators on ℕ
 
 _le_ : ℕ → ℕ → Bool
 m le n = recSum (λ a → true) (λ b → false) (trich m n)
@@ -28,32 +40,52 @@ m lt n = recSum (λ a → (if ((sub n m a) eq 0 ) then false else true )) (λ b 
 _gt_ : ℕ → ℕ → Bool
 m gt n = recSum (λ a → false) (λ b → true) (trich m n)
 
+
+-- Lemmas and Theorems on LessThanOrEq
+
+
+-- Theorem 1 : If a, b, c ∈ ℕ and a ≤ b & a ≤ c, then a ≤ (b + c)
+
 leLemma₁ : {a b : ℕ} → (a ≤ b) → (a ≤ (1 + b))
 leLemma₁ (0≤ n) = 0≤ (1 + n)
 leLemma₁ (succ≤ m) = succ≤ (leLemma₁ m)
 
-leThm₁ : {a b : ℕ} → (a ≤ b) → (c : ℕ) → (a ≤ (b + c))
-leThm₁ (0≤ n) zero = 0≤ (n + zero)
-leThm₁ (succ≤ m) zero = succ≤ (leThm₁ m zero)
-leThm₁ (0≤ n) (succ c) = 0≤ (n + (succ c))
-leThm₁ (succ≤ m) (succ c) = succ≤ (leThm₁ m (succ c))
+leLemma₂ : {a b : ℕ} → (a ≤ b) → (c : ℕ) → (a ≤ (b + c))
+leLemma₂ (0≤ n) zero = 0≤ (n + zero)
+leLemma₂ (succ≤ m) zero = succ≤ (leLemma₂ m zero)
+leLemma₂ (0≤ n) (succ c) = 0≤ (n + (succ c))
+leLemma₂ (succ≤ m) (succ c) = succ≤ (leLemma₂ m (succ c))
 
-leThm₂ : {a b c : ℕ} → (a ≤ b) → (a ≤ c) → (a ≤ (b + c))
-leThm₂ {c = p} x y = leThm₁ x p
+leThm₁ : {a b c : ℕ} → (a ≤ b) → (a ≤ c) → (a ≤ (b + c))
+leThm₁ {c = p} x y = leLemma₂ x p
 
-leLemma₂ : {a b : ℕ} → (a ≤ b) → (a ≤ (3 * b))
-leLemma₂ pf = leThm₂ (leThm₂ pf pf) pf
 
-leLemma₃ : {a b : ℕ} → (a ≤ b) → (a ≤ (4 * b))
-leLemma₃ pf = leThm₂ (leLemma₂ pf) pf
+-- Theorem 2 : If a, b, c ∈ ℕ and c ≥ 1 & a ≤ b , then a ≤ (c * b)
 
-leThm₃ : {a b : ℕ} → (a ≤ b) → (c : ℕ) → (a ≤ ((succ c) * b  ))
-leThm₃ (0≤ n) zero = 0≤ (1 * n)
-leThm₃ (succ≤ x) zero = succ≤ (leThm₃ x zero)
-leThm₃ (0≤ n) (succ y) = 0≤ ((succ (succ y)) * n)
-leThm₃ (succ≤ x) (succ y) = leThm₂ (leThm₃ (succ≤ x) y) (succ≤ x)
+leLemma₃ : {a b : ℕ} → (a ≤ b) → (a ≤ (3 * b))
+leLemma₃ pf = leThm₁ (leThm₁ pf pf) pf
+
+leLemma₄ : {a b : ℕ} → (a ≤ b) → (a ≤ (4 * b))
+leLemma₄ pf = leThm₁ (leLemma₃ pf) pf
+
+leThm₂ : {a b : ℕ} → (a ≤ b) → (c : ℕ) → (a ≤ ((succ c) * b  ))
+leThm₂ (0≤ n) zero = 0≤ (1 * n)
+leThm₂ (succ≤ x) zero = succ≤ (leThm₂ x zero)
+leThm₂ (0≤ n) (succ y) = 0≤ ((succ (succ y)) * n)
+leThm₂ (succ≤ x) (succ y) = leThm₁ (leThm₂ (succ≤ x) y) (succ≤ x)
+
+
+-- Transitivity of LessThanOrEq Operator
+
+-- Theorem 3 : If a, b, c ∈ ℕ and a ≤ b & b ≤ c then a ≤ c
 
 leTrans : {x y z : ℕ} → (x ≤ y) → (y ≤ z) → (x ≤ z)
 leTrans (0≤ 0) (0≤ n) = 0≤ n
 leTrans (0≤ ._) (succ≤ y) = {!!}
 leTrans (succ≤ x₁) (succ≤ y) = {!!}
+
+
+-- Strong cancellation for ℕ
+
+cancel₂ : {a b c : ℕ} → (pf₁ : a ≤ b) → (pf₂ : b ≤ c) → (((sub c b pf₂) + (sub b a pf₁)) == (sub c a (leTrans pf₁ pf₂)))
+cancel₂ x y = {!!}
