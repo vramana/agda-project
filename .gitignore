@@ -1,0 +1,6 @@
+*.agdai
+*.agda~
+*#*
+agda-sc/
+agda-stdlib/
+LogicTypesSpaces/
