@@ -6,6 +6,22 @@ open import Logic
 
 module LessThan where
 
+-- Helper Functions to various numbers of (m ≤ n)
+
+left≤ : {m n : ℕ} → (m ≤ n) → ℕ
+left≤ (0≤ n) = zero
+left≤ (succ≤ pf) = succ (left≤ pf)
+
+right≤ : {m n : ℕ} → (m ≤ n) → ℕ
+right≤ (0≤ n) = n
+right≤ (succ≤ pf) = succ (right≤ pf)
+
+zero≤ : {m n : ℕ} → (m ≤ n) → ℕ
+zero≤ (0≤ n) = n
+zero≤ (succ≤ pf) = zero≤ pf
+
+-- Subtraction operator
+
 sub : (m : ℕ) → (n : ℕ) → (n ≤ m) → ℕ
 sub zero zero (0≤ .0) = 0
 sub zero (succ n) ()
@@ -24,21 +40,21 @@ cancel₁ {b = succ b} (succ≤ pf) = succ # cancel₁ pf
 trich : (m : ℕ) → (n : ℕ) → ((m ≤ n) ⊕ (n ≤ m))
 trich zero y = i₁ (0≤ y)
 trich (succ x) zero = i₂ (0≤ (succ x))
-trich (succ x) (succ y) = recSum (λ a → i₁ (succ≤ a)) (λ b → i₂ (succ≤ b)) (trich x y)
+trich (succ x) (succ y) = recℕ (λ a → i₁ (succ≤ a)) (λ b → i₂ (succ≤ b)) (trich x y)
 
 -- Comparsion Operators on ℕ
 
 _le_ : ℕ → ℕ → Bool
-m le n = recSum (λ a → true) (λ b → false) (trich m n)
+m le n = recℕ (λ a → true) (λ b → false) (trich m n)
 
 _eq_ : ℕ → ℕ → Bool
-m eq n = recSum (λ a → (recSum (λ b → true) (λ c → false) (trich n m))) (λ b → false) (trich m n)
+m eq n = recℕ (λ a → (recℕ (λ b → true) (λ c → false) (trich n m))) (λ b → false) (trich m n)
 
 _lt_ : ℕ → ℕ → Bool
-m lt n = recSum (λ a → (if ((sub n m a) eq 0 ) then false else true )) (λ b → false) (trich m n)
+m lt n = recℕ (λ a → (if ((sub n m a) eq 0 ) then false else true )) (λ b → false) (trich m n)
 
 _gt_ : ℕ → ℕ → Bool
-m gt n = recSum (λ a → false) (λ b → true) (trich m n)
+m gt n = recℕ (λ a → false) (λ b → true) (trich m n)
 
 
 -- Lemmas and Theorems on LessThanOrEq
@@ -79,19 +95,16 @@ leThm₂ (succ≤ x) (succ y) = leThm₁ (leThm₂ (succ≤ x) y) (succ≤ x)
 
 -- Theorem 3 : If a, b, c ∈ ℕ and a ≤ b & b ≤ c then a ≤ c
 
-leTrans : {x y z : ℕ} → (x ≤ y) → (y ≤ z) → (x ≤ z)
-leTrans (0≤ 0) (0≤ n) = 0≤ n
-leTrans (0≤ ._) (succ≤ y) = {!!}
-leTrans (succ≤ x₁) (succ≤ y) = {!!}
-
+--leTrans : {x y z : ℕ} → (x ≤ y) → (y ≤ z) → (x ≤ z)
+--leTrans pf₁ pf₂ = {!!}
 
 -- Strong cancellation for ℕ
 
-cancel₂ : {a b c : ℕ} → (pf₁ : a ≤ b) → (pf₂ : b ≤ c) → (((sub c b pf₂) + (sub b a pf₁)) == (sub c a (leTrans pf₁ pf₂)))
-cancel₂ x y = {!!}
+--cancel₂ : {a b c : ℕ} → (pf₁ : a ≤ b) → (pf₂ : b ≤ c) → (((sub c b pf₂) + (sub b a pf₁)) == (sub c a (leTrans pf₁ pf₂)))
+--cancel₂ x y = {!!}
 
 
 -- Archimedian property on ℕ
 
-archProp : {a b : ℕ} → (1 ≤ a) → (a ≤ b) → Σ ℕ (λ c → b ≤ (c * a))
-archProp m n = {!!}
+--archProp : {a b : ℕ} → (1 ≤ a) → (a ≤ b) → Σ ℕ (λ c → b ≤ (c * a))
+--archProp m n = {!!}

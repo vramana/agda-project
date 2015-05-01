@@ -13,7 +13,7 @@ fzero asℕ = 0
 (fsucc k) asℕ = succ (k asℕ)
  
 finFnhead : {A : Type} → {n : ℕ} → (Fin (succ n) → A) → A
-finFnhead f = f fzero 
+finFnhead f = f(fzero) 
 
 finFntail : {A : Type} → {n : ℕ} → (Fin (succ n) → A) → ((Fin n) → A)
 finFntail f k = f (fsucc k)

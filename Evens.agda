@@ -17,15 +17,14 @@ open import Logic
 1odd ()
 
 module n|n+1even where
-  P : ℕ → Type
-  P n = (Even n) ⊕ (Even (succ n))
+  P = λ n → (Even n) ⊕ (Even (succ n))
 
   step : {n : ℕ} → P n → P (succ n)
-  step (i₁ p) = i₂(p +2even)
-  step (i₂ p) = i₁(p)
+  step (ι₁ p) = ι₂(p +2even)
+  step (ι₂ p) = ι₁(p)
 
   thm : (n : ℕ) → P n
-  thm 0 = i₁ 0even
+  thm 0 = ι₁ 0even
   thm (succ n) = step (thm n)
 
 value : {n : ℕ} → Even n → ℕ
@@ -33,8 +32,8 @@ value 0even = 0
 value (p +2even) = succ (succ (value p))
 
 half : (n : ℕ) → Even n → ℕ
-half 0 0even = 0
-half (succ (succ n)) (p +2even) = succ (half n p)
+half .0 0even = 0
+half (succ (succ n)) (p +2even) = succ (half n p) 
 
 -- wrong = half 2 0even
 

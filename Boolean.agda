@@ -1,42 +1,54 @@
-module Boolean where
-
 open import Base
 
-data Bool : Type where
-  true  : Bool
+module Boolean where
+
+
+data Bool : Type where 
+  true : Bool
   false : Bool
 
 not : Bool → Bool
 not true = false
 not false = true
 
-_&_ : Bool → Bool → Bool
-_&_ true y = y
-_&_ false y = false
+thisIsFalse : Bool
+thisIsFalse = not(true)
 
-!_ : Bool → Bool
-! true = false
-! false = true
+and : Bool -> (Bool -> Bool)
+and true true = true
+and false _ = false
+and true false = false
+
+_&_ : Bool → Bool → Bool
+true & true = true
+false & _ = false
+true & false = false
+
+_&&_ : Bool → Bool → Bool
+_&&_ = and
+
+thisIsTrue : Bool
+thisIsTrue = _&_ true true
+
+verytrue : Bool → Bool
+verytrue x = x & x
+
+notnot : Bool → Bool
+notnot = λ x → not (not x)
 
 _||_ : Bool → Bool → Bool
-true || y = true
+true || _ = true
 false || y = y
 
-_xor_ : Bool → Bool →  Bool
-x xor y = (x & not y) || (not x & y)
+_xor_ : Bool → Bool → Bool
+_xor_ = λ x y → (x || y) & not (x & y)
 
-nand₀ : Bool → Bool → Bool
-nand₀ x y = (not x) || (not y)
+xor₀ : Bool → Bool → Bool
+xor₀ = λ x → (λ y → (x || y) & not (x & y))
 
-nand₁ : Bool → Bool → Bool
-nand₁ true y = not y
-nand₁ false y = true
+xor₁ : Bool → Bool → Bool
+xor₁ x y = (x || y) & not (x & y)
 
-nand₂ : Bool → Bool → Bool
-nand₂ = λ x y → (not x) || (not y)
-
-if_then_else : {A : Type} → Bool → A → A → A
-if_then_else true x _ = x
-if_then_else false _ y = y
-
-
+if_then_else_ : {A : Type} → Bool → A → A → A
+if true then x else y = x
+if false then x else y = y 

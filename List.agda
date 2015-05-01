@@ -9,8 +9,15 @@ data List (A : Type) : Type where
   [] : List A
   _::_ : A → List A → List A
 
+data AnotherList (A : Type) : Type where
+  [] : AnotherList A
+  _:::_ : AnotherList A → A → AnotherList A
+
+
 onetwothree : List ℕ
 onetwothree = 1 :: (2 :: (3 :: []))
+
+threetwo = ([] ::: 3) ::: 2 
 
 length₀ : (A : Type) → List A → ℕ
 length₀ A [] = 0

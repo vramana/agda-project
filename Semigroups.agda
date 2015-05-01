@@ -1,4 +1,5 @@
 open import Base
+
 open import Id
 
 module Semigroups where

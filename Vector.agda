@@ -31,11 +31,11 @@ vtail (x :: v) = v
 
 open import List
 
-list→vec : {A : Type} → List A → Σ ℕ (Vec A)
+list→vec : {A : Type} → List A → Σ ℕ (λ n → Vec A n)
 list→vec [] = [ 0 , [] ]
 list→vec (head :: tail) = [ succ (proj₁ (list→vec tail)) , head :: (proj₂ (list→vec tail)) ]
 
-vec→list : {A : Type} → Σ ℕ (Vec A) → List A
+vec→list : {A : Type} → Σ ℕ (λ n → Vec A n) → List A
 vec→list [ 0 , [] ] = []
 vec→list [ succ n , (head :: tail) ] = head :: (vec→list [ n , tail ])
 
@@ -44,7 +44,7 @@ ltov [] = []
 ltov (x :: l) = x :: ltov l
 
 lookup : {A : Type} → (n : ℕ) → Vec A n → (k : ℕ) → (succ k ≤ n) → A
-lookup 0 [] k ()
+lookup .0 [] k ()
 lookup (succ n) (x :: v) zero p = x
 lookup (succ n) (x :: v) (succ k) (succ≤ p) = lookup n v k p  
 
